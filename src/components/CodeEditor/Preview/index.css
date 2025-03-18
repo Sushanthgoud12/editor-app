@@ -1,0 +1,20 @@
+.preview {
+  flex: 1;
+  background: white;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-header {
+  padding: 10px;
+  background-color: #252526;
+  color: white;
+  font-size: 14px;
+  border-bottom: 1px solid #333;
+}
+
+.preview iframe {
+  flex: 1;
+  border: none;
+  background: white;
+}

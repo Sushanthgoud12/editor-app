@@ -1,0 +1,77 @@
+.code-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #1e1e1e;
+  color: #fff;
+  user-select: none;
+}
+
+.main-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  cursor: col-resize;
+}
+
+.editor-section {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.editor-container {
+  flex: 1;
+  overflow: hidden;
+}
+
+.preview-section {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.resizer {
+  width: 4px;
+  background: #333;
+  cursor: col-resize;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -2px;
+  z-index: 100;
+  transition: background-color 0.2s ease;
+  touch-action: none;
+}
+
+.resizer:hover,
+.resizer.resizing {
+  background: #666;
+}
+
+/* Prevent text selection while resizing */
+.resizing {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Add styles for resizing state */
+.main-container.resizing {
+  cursor: col-resize;
+}
+
+.main-container.resizing * {
+  pointer-events: none;
+}
+
+.main-container.resizing .resizer {
+  pointer-events: auto;
+}
