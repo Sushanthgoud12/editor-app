@@ -3,7 +3,7 @@ import Editor from './Editor/index';
 import Tabs from './Tabs/index';
 import Toolbar from './Toolbar/index';
 import Preview from './Preview/index';
-import { saveToLocalStorage, loadFromLocalStorage } from './utils/localStorage';
+import { saveToLocalStorage, getFromLocalStorage } from './utils/localStorage';
 import './codeEditor.css';
 
 const defaultHtml = `<!DOCTYPE html>
@@ -20,9 +20,9 @@ const defaultCss=`@import url('https://fonts.googleapis.com/css2?family=Bree+Ser
 const CodeEditor = () => {
   const [activeTab, setActiveTab] = useState('html');
   const [code, setCode] = useState({
-    html: loadFromLocalStorage('html') || defaultHtml,
-    css: loadFromLocalStorage('css') || defaultCss,
-    js: loadFromLocalStorage('js') || ''
+    html: getFromLocalStorage('html') || defaultHtml,
+    css: getFromLocalStorage('css') || defaultCss,
+    js: getFromLocalStorage('js') || ''
   });
   const [previewCode, setPreviewCode] = useState({
     html: defaultHtml,
