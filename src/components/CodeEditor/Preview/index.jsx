@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './index.css';
 
-const Preview = ({ code }) => {
+const Preview = ({ code, onClose, isMobile }) => {
   const [srcDoc, setSrcDoc] = useState('');
 
   useEffect(() => {
@@ -12,6 +12,7 @@ const Preview = ({ code }) => {
       <!DOCTYPE html>
       <html>
         <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>${code.css}</style>
         </head>
         <body>
@@ -31,7 +32,15 @@ const Preview = ({ code }) => {
   return (
     <div className="preview">
       <div className="preview-header">
-        Preview
+        <span>Preview</span>
+        {isMobile && (
+          <button 
+            className="close-preview"
+            onClick={onClose}
+          >
+            Back to Editor
+          </button>
+        )}
       </div>
       <iframe
         srcDoc={srcDoc}

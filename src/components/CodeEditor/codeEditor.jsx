@@ -29,11 +29,22 @@ const CodeEditor = () => {
     css: '',
     js: ''
   });
+  const [isPreviewActive, setIsPreviewActive] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 796);
 
   // Split screen state
   const [isResizing, setIsResizing] = useState(false);
   const [splitPosition, setSplitPosition] = useState(50);
   const mainContainerRef = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 796);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleCodeChange = (value) => {
     setCode(prevCode => ({
@@ -48,6 +59,11 @@ const CodeEditor = () => {
 
   const handleRun = () => {
     setPreviewCode(code);
+    setIsPreviewActive(true);
+  };
+
+  const handleClosePreview = () => {
+    setIsPreviewActive(false);
   };
 
   const handleSave = () => {
@@ -98,10 +114,25 @@ const CodeEditor = () => {
   }, [isResizing]);
 
   const handleDoubleClick = useCallback((e) => {
-    if (e.target === mainContainerRef.current) {
-      startResizing(e);
+    if (!isMobile) {
+      const container = mainContainerRef.current;
+      if (!container) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const clickPosition = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+      
+      // Reset to 50/50 if we're close to that already
+      if (Math.abs(splitPosition - 50) < 5) {
+        if (clickPosition < 50) {
+          setSplitPosition(30); // Favor editor
+        } else {
+          setSplitPosition(70); // Favor preview
+        }
+      } else {
+        setSplitPosition(50); // Reset to middle
+      }
     }
-  }, [startResizing]);
+  }, [isMobile, splitPosition]);
 
   useEffect(() => {
     if (isResizing) {
@@ -127,11 +158,11 @@ const CodeEditor = () => {
       <div 
         className="main-container" 
         ref={mainContainerRef}
-        onDoubleClick={handleDoubleClick}
+        onDoubleClick={!isMobile ? handleDoubleClick : undefined}
       >
         <div 
-          className="editor-section"
-          style={{ width: `${splitPosition}%` }}
+          className={`editor-section ${isPreviewActive && isMobile ? 'hidden' : ''}`}
+          style={!isMobile ? { width: `${splitPosition}%` } : undefined}
         >
           <Tabs 
             activeTab={activeTab} 
@@ -150,17 +181,27 @@ const CodeEditor = () => {
             onSave={handleSave}
             onReset={handleReset}
           />
-          <div 
-            className="resizer"
-            onMouseDown={startResizing}
-            style={{ touchAction: 'none' }}
-          />
+          {!isMobile && (
+            <div 
+              className="resizer"
+              onMouseDown={startResizing}
+              onDoubleClick={(e) => {
+                e.stopPropagation();
+                setSplitPosition(50);
+              }}
+              style={{ touchAction: 'none' }}
+            />
+          )}
         </div>
         <div 
-          className="preview-section"
-          style={{ width: `${100 - splitPosition}%` }}
+          className={`preview-section ${isPreviewActive ? 'active' : ''}`}
+          style={!isMobile ? { width: `${100 - splitPosition}%` } : undefined}
         >
-          <Preview code={previewCode} />
+          <Preview 
+            code={previewCode} 
+            onClose={handleClosePreview}
+            isMobile={isMobile}
+          />
         </div>
       </div>
     </div>

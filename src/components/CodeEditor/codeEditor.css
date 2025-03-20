@@ -13,15 +13,16 @@
   overflow: hidden;
   position: relative;
   width: 100%;
-  cursor: col-resize;
 }
 
 .editor-section {
   display: flex;
   flex-direction: column;
-  min-width: 200px;
   position: relative;
   flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
 }
 
 .editor-container {
@@ -32,9 +33,11 @@
 .preview-section {
   display: flex;
   flex-direction: column;
-  min-width: 200px;
   position: relative;
   flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
 }
 
 .resizer {
@@ -48,11 +51,197 @@
   z-index: 100;
   transition: background-color 0.2s ease;
   touch-action: none;
+  display: none; /* Hidden on mobile */
 }
 
-.resizer:hover,
-.resizer.resizing {
-  background: #666;
+/* Button styles */
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 10px;
+  background: #2d2d2d;
+}
+
+.button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+/* Mobile styles */
+@media (max-width: 796px) {
+  .main-container {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .editor-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: translateX(0);
+    transition: transform 0.3s ease;
+  }
+
+  .editor-section.hidden {
+    transform: translateX(-100%);
+  }
+
+  .preview-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .preview-section.active {
+    transform: translateX(0);
+  }
+
+  .preview-section iframe {
+    width: 100%;
+    height: calc(100% - 50px);
+    border: none;
+  }
+
+  .preview-header {
+    height: 50px;
+    padding: 0 15px;
+    background: #1e1e1e;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333;
+  }
+
+  .close-preview {
+    padding: 8px 16px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+  }
+
+  .close-preview:hover {
+    background: #218838;
+  }
+
+  .button-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .editor-container {
+    height: calc(100vh - 120px);
+  }
+
+  .resizer {
+    display: none;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 797px) {
+  .editor-section {
+    width: 50%;
+    position: relative;
+    transition: width 0.3s ease;
+  }
+
+  .preview-section {
+    width: 50%;
+    display: flex;
+    transition: width 0.3s ease;
+  }
+
+  .preview-header {
+    padding: 10px 20px;
+    background: #1e1e1e;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .close-preview {
+    display: none;
+  }
+
+  .resizer {
+    display: block;
+    width: 8px;
+    background: #333;
+    cursor: col-resize;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: -4px;
+    z-index: 100;
+    transition: background-color 0.2s ease;
+  }
+
+  .resizer:hover,
+  .resizer:active {
+    background: #666;
+    width: 8px;
+    right: -4px;
+  }
+
+  .resizer::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    height: 30px;
+    width: 2px;
+    background: #fff;
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .resizer:hover::after {
+    opacity: 0.6;
+  }
+
+  .main-container.resizing .resizer::after {
+    opacity: 0.8;
+  }
+
+  .main-container.resizing {
+    cursor: col-resize;
+  }
+
+  .main-container.resizing .editor-section,
+  .main-container.resizing .preview-section {
+    transition: none;
+  }
+
+  .main-container.resizing * {
+    user-select: none;
+  }
 }
 
 /* Prevent text selection while resizing */
